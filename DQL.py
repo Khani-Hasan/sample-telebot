@@ -17,7 +17,7 @@ def get_prod_list(category):
     if category in categories:
         cur.execute('select * from product where category=%s;',(category,))
     else:
-        cur.execute("select * from product where category=NULL;")
+        cur.execute("select * from product where category is NULL;")
     data = cur.fetchall()
     cur.close()
     conn.close()

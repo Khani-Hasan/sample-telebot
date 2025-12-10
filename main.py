@@ -227,10 +227,13 @@ def call_handler(call):
         bot.answer_callback_query(call_id, ". . .")
     elif data.startswith("setcat"):
         bot.edit_message_reply_markup(cid, mid, reply_markup=None)
-        p_id = data.split("_")[-2]
-        cat = data.split("_")[-1]
-        change_cat(int(p_id), cat)
-        bot.send_message(cid, f"کالا در دسته بندی {cat} قرار داده شد.")
+        if data == "setcat_null":
+            bot.send_message(cid, "کالا در دسته بندی غیره قرار گرفت.")
+        else:
+            p_id = data.split("_")[-2]
+            cat = data.split("_")[-1]
+            change_cat(int(p_id), cat)
+            bot.send_message(cid, f"کالا در دسته بندی {cat} قرار داده شد.")
     elif data.startswith("adm_"):
         if data.startswith("adm_product"):
             cat = data.split("_")[-1]
@@ -381,8 +384,9 @@ def photo_handler(message):
         p_id = insert_product(prod_name, prod_qty, prod_price, prod_desc, File_id=File_id)
         steps.pop(cid)
         markup = InlineKeyboardMarkup()
-        for cat in ("Writing tools", "Clothing", "Electronics", "Tools", "Null"):
-            markup.add(InlineKeyboardButton(cat.title(), callback_data=f'setcat_{p_id}_{cat}'))
+        for cat in ("Writing tools", "Clothing", "Electronics", "Tools"):
+            markup.add(InlineKeyboardButton(cat, callback_data=f'setcat_{p_id}_{cat}'))
+        markup.add(InlineKeyboardButton("غیره", callback_data="setcat_null"))
         bot.send_message(cid, "لطفا یک دسته بندی برای کالا انتخاب کنید.", reply_markup=markup, reply_to_message_id=message.message_id)
 
 
