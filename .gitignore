@@ -1,0 +1,7 @@
+.venv/*
+.vscode
+*.cfg
+Lib
+Scripts
+__pycache__
+!Logs
