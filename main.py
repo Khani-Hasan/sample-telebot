@@ -43,10 +43,10 @@ def gen_cartprod_markup(prod, qty):
 
 def gen_prod_caption(products, qty=1):
     text = f'''
-    نام کالا: {products["Name"]}
+نام کالا: {products["Name"]}
 توضیحات: {products["Descrip"]}
 قیمت: {products["Price"]*qty} تومان 
-    '''
+'''
     return text
 
 @bot.message_handler(commands=["start"])
@@ -102,6 +102,7 @@ def call_handler(call):
         cat = data.split("_")[-1]
         data = get_prod_list(cat)
         if len(data) == 0:
+            bot.answer_callback_query(call_id,"Oops.")
             bot.send_message(cid, "فعلا محصولی برای نمایش در این دسته بندی نداریم.")
         else:
             text = ""
@@ -113,6 +114,7 @@ def call_handler(call):
             markup = InlineKeyboardMarkup()
             for i in range(len(data)):
                 markup.add(InlineKeyboardButton(f'{data[i]["ID"]}', callback_data=f"product_{data[i]["ID"]}"))
+            bot.answer_callback_query(call_id, f"دسته بندی {cat}.")
             bot.send_message(cid, text, reply_markup=markup)
     elif data.startswith("product_"):
         pid = data.split("_")[-1]
@@ -120,6 +122,7 @@ def call_handler(call):
         caption = gen_prod_caption(prod_data)
         markup = gen_prod_markup(prod_data)
         photo = prod_data["File_id"]
+        bot.answer_callback_query(call_id, "لطفا تعداد مورد نظر را انتخاب کنید.")
         bot.send_photo(cid, photo, caption, reply_markup=markup)
     elif data.startswith("change,"):
         new_data = data.split(",")
@@ -127,11 +130,11 @@ def call_handler(call):
         qty = new_data[-1]
         prod_data = get_prod_data(prod)
         if not data.startswith("change,cart") and qty == "0":
-            bot.answer_callback_query(call_id, ".تعداد نمی تواند صفر باشد")
+            bot.answer_callback_query(call_id, "تعداد نمی تواند صفر باشد.")
         elif qty < "0":
-            bot.answer_callback_query(call_id, ".مقدار نمی تواند کمتر از صفر باشد")
+            bot.answer_callback_query(call_id, "مقدار نمی تواند کمتر از صفر باشد.")
         elif qty > "5":
-            bot.answer_callback_query(call_id, ".تعداد نمی تواند بیشتر از پنج باشد")
+            bot.answer_callback_query(call_id, "تعداد نمی تواند بیشتر از پنج باشد.")
         else:
             if data.startswith("change,cart"):
                 markup = gen_cartprod_markup(prod_data, int(qty))
@@ -152,7 +155,7 @@ def call_handler(call):
             if carts[cid][int(prod)] > 5:
                 carts[cid][int(prod)] = 5
             markup = InlineKeyboardMarkup()
-            markup.add(InlineKeyboardButton(".به سبد خرید اضافه شد", callback_data="Deco"))
+            markup.add(InlineKeyboardButton("به سبد خرید اضافه شد.", callback_data="Deco"))
             bot.edit_message_reply_markup(cid, mid, reply_markup=markup)
     elif data == "nobuy":
         bot.edit_message_reply_markup(cid, mid, reply_markup=None)
@@ -235,6 +238,7 @@ def call_handler(call):
             change_cat(int(p_id), cat)
             bot.send_message(cid, f"کالا در دسته بندی {cat} قرار داده شد.")
     elif data.startswith("adm_"):
+        bot.answer_callback_query(call_id, "قبل از اعمال هر تغییر به ادمین های دیگر گزارش دهید.")
         if data.startswith("adm_product"):
             cat = data.split("_")[-1]
             data = get_prod_list(cat)
@@ -268,6 +272,7 @@ def call_handler(call):
                 markup.add(InlineKeyboardButton("لغو", callback_data="nobuy"))
                 bot.send_message(cid, text, reply_markup=markup)
     elif data.startswith("remove"):
+        bot.answer_callback_query(call_id, "حذف کالا ثبت شد.")
         p_id = data.split("_")[-1]
         del_prod(p_id)
         bot.send_message(cid, f"کالای {p_id} حذف شد.")
@@ -295,7 +300,7 @@ def message_handler(message):
                 data = get_prod_data(i)
                 price = data["Price"]*carts[cid][i]
                 total += price
-                line = f"کد: {data["ID"]} - {data["Name"]} {data["Descrip"]} تعداد: - {carts[cid][i]} - قیمت: {price} تومان\n"
+                line = f"کد: {data["ID"]} - {data["Name"]} {data["Descrip"]} - تعداد:  {carts[cid][i]} - قیمت: {price} تومان\n"
                 text += line
             line = f"قیمت کل: {total} تومان\n"
             text += line
