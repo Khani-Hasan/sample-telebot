@@ -65,7 +65,7 @@ def start(message):
 def add_prod(message):
     cid = message.chat.id
     if cid in admins:
-        bot.send_message(cid, "لطفا یک عکس به همراه نام کالا، تعداد، قیمت و توضیحات کالا (هر کدام در خظ مجزا) را ارسال کنید.")
+        bot.send_message(cid, "لطفا یک عکس به همراه نام کالا، تعداد، قیمت و توضیحات کالا (هر کدام در خط مجزا) را ارسال کنید.")
         steps[cid] = "AP"
 
 @bot.message_handler(commands=["change_product"])
