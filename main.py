@@ -202,6 +202,7 @@ def call_handler(call):
             steps[cid] = "P"
     elif data == "finalize":
         check_user(cid)
+        bot.answer_callback_query(call_id, "در حال بررسی اطلاعات")
         if get_user_data(cid)["Phone_num"] == None or get_user_data(cid)["Address"] == None:
             bot.send_message(cid, "لطفا اطلاعات خود را در پنل اطلاعات مشتری وارد کنید.")
         else:
