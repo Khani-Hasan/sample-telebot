@@ -1,4 +1,3 @@
-import mysql.connector
 from Config import db_config
 from DML import *
 database_name = db_config["database"]

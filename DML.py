@@ -1,9 +1,11 @@
 import mysql.connector
 import logging
+import os
 from DQL import get_prod_data
 from Config import db_config
 
-logging.basicConfig(level=20, filename="Logs/project.log", filemode="a", format="%(levelname)s - %(message)s - %(asctime)s")
+os.makedirs("Logs", exist_ok=True)
+logging.basicConfig(level=20, filename="Logs/project.log", filemode="a", format="%(levelname)s - %(message)s - %(asctime)s", encoding="utf-8")
 
 
 def insert_user(CID, First_name, Last_name, Phone_num=None, Address=None):
